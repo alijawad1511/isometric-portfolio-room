@@ -2,11 +2,13 @@ import * as THREE from 'three';
 
 import Sizes from './utils/Sizes';
 import Time from './utils/Time'
+import Resources from './utils/Resources'
+import assets from './utils/assets'
 
 import Camera from './Camera';
 import Renderer from './Renderer';
 
-import World from './World/Room'
+import World from './World/World'
 
 export default class Experience {
   static instance;
@@ -22,6 +24,7 @@ export default class Experience {
     this.scene = new THREE.Scene();
     this.camera = new Camera();
     this.renderer = new Renderer();
+    this.resources = new Resources(assets);
     this.world = new World();
 
     this.time.on('resize',() => {
