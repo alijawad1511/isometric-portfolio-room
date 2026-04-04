@@ -20,5 +20,9 @@ export default class World {
 
   resize() {}
   
-  update() {}
+  update() {
+    if (this.room) {
+      this.room.update();
+    }
+  }
 }
