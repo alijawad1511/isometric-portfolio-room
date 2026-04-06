@@ -19,7 +19,11 @@ export default class Controls {
       ease: 0.1
     };
 
+    // Current Position
     this.position = new THREE.Vector3(0,0,0);
+
+    // LookAt Position, next to current position of camera
+    this.lookAtPosition = new THREE.Vector3(0,0,0);
 
     this.setPath();
     this.onWheel();
@@ -77,7 +81,11 @@ export default class Controls {
 
     this.lerp.target = GSAP.utils.clamp(0,1,this.lerp.target);
     this.lerp.current = GSAP.utils.clamp(0,1,this.lerp.current);
+    
     this.curve.getPointAt(this.lerp.current,this.position);
+    this.curve.getPointAt(this.lerp.current+0.00001,this.lookAtPosition);
+
     this.camera.orthographicCamera.position.copy(this.position);
+    this.camera.orthographicCamera.lookAt(this.lookAtPosition)
   }
 }
