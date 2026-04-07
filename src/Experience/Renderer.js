@@ -34,23 +34,6 @@ export default class Camera {
   }
 
   update() {
-    // Tell renderer to Cut the windows in the viewport and set camera view in those cut windows
-    this.renderer.setViewport(0,0,this.sizes.width, this.sizes.height);
-    this.renderer.render(this.scene,this.camera.orthographicCamera);
-
-    // Mini viewport (top-right)
-    const w = this.sizes.width / 3;
-    const h = this.sizes.height / 3;
-    const x = this.sizes.width - w;
-    const y = this.sizes.height - h;
-    
-    // Second Screen
-    this.renderer.setScissorTest(true);
-    this.renderer.setViewport(x, y, w, h);
-    this.renderer.setScissor(x, y, w, h);
-
     this.renderer.render(this.scene,this.camera.perspectiveCamera);
-
-    this.renderer.setScissorTest(false);
   }
 }
