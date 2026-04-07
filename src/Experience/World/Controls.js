@@ -25,6 +25,11 @@ export default class Controls {
     // LookAt Position, next to current position of camera
     this.lookAtPosition = new THREE.Vector3(0,0,0);
 
+    // Vectors to calculate direction vector outwards of circular path movement
+    this.directionalVector = new THREE.Vector3(0,0,0);
+    this.staticVector = new THREE.Vector3(0,1,0); // Upward (+Y Up)
+    this.crossVector = new THREE.Vector3(0,0,0);
+
     this.setPath();
     this.onWheel();
   }
@@ -35,11 +40,9 @@ export default class Controls {
       if (e.deltaY > 0) {
         // when mouse wheel scroll down
         this.lerp.target += 0.01;
-        this.back = false;
       } else {
         // when mouse wheel scroll up
         this.lerp.target -= 0.01;
-        this.back = true;
       }
     })
   }
@@ -47,11 +50,10 @@ export default class Controls {
   setPath() {
     // Create path which camera will follow
     this.curve = new THREE.CatmullRomCurve3( [
-      new THREE.Vector3( -10, 0, 10 ),
-      new THREE.Vector3( -5, 5, 5 ),
-      new THREE.Vector3( 0, 0, 0 ),
-      new THREE.Vector3( 5, -5, 5 ),
-      new THREE.Vector3( 10, 0, 10 )
+      new THREE.Vector3( -5, 0, 0 ),
+      new THREE.Vector3( 0, 0, -5 ),
+      new THREE.Vector3( 5, 0, 0 ),
+      new THREE.Vector3( 0, 0, 5 ),
     ],true);
 
     const points = this.curve.getPoints( 50 );
@@ -72,20 +74,25 @@ export default class Controls {
       this.lerp.ease
     );
 
-    // Scroll up or down turn movement back or forward
-    if (this.back) {
-      this.lerp.target -= 0.0001;
-    } else {
-      this.lerp.target += 0.0001;
-    }
+    this.lerp.current = GSAP.utils.clamp(0, 1, this.lerp.current)
+    this.lerp.target = GSAP.utils.clamp(0, 1, this.lerp.target)
 
-    this.lerp.target = GSAP.utils.clamp(0,1,this.lerp.target);
-    this.lerp.current = GSAP.utils.clamp(0,1,this.lerp.current);
-    
-    this.curve.getPointAt(this.lerp.current,this.position);
-    this.curve.getPointAt(this.lerp.current+0.00001,this.lookAtPosition);
-
+    // Copies current position into this.position vector (% keeps point below 1)
+    this.curve.getPointAt(this.lerp.current % 1,this.position);
+    // Copies this.position vector into camera position
     this.camera.orthographicCamera.position.copy(this.position);
-    this.camera.orthographicCamera.lookAt(this.lookAtPosition)
+
+    this.directionalVector.subVectors(
+      this.curve.getPointAt((this.lerp.current % 1) + 0.000001), // Next Position Vector
+      this.position // Current Position Vector
+    );
+    this.directionalVector.normalize(); // Make this vector a unit vector
+    // crossVector will be point inward
+    this.crossVector.crossVectors(
+      this.directionalVector,
+      this.staticVector
+    )
+
+    this.camera.orthographicCamera.lookAt(this.crossVector);
   }
 }
