@@ -29,33 +29,33 @@ export default class Camera {
   }
 
   createOrthographicCamera() {
-    // this.orthographicCamera = new THREE.OrthographicCamera(
-    //   (-this.sizes.aspect * this.sizes.frustumSize) / 2,
-    //   (this.sizes.aspect * this.sizes.frustumSize) / 2,
-    //   this.sizes.frustumSize / 2,
-    //   -this.sizes.frustumSize / 2,
-    //   -10,
-    //   10
-    // );
-    this.orthographicCamera = new THREE.PerspectiveCamera(
-      35,
-      this.sizes.aspect,
-      0.1,
-      1000
+    this.orthographicCamera = new THREE.OrthographicCamera(
+      (-this.sizes.aspect * this.sizes.frustumSize) / 2,
+      (this.sizes.aspect * this.sizes.frustumSize) / 2,
+      this.sizes.frustumSize / 2,
+      -this.sizes.frustumSize / 2,
+      -10,
+      10
     );
+
+    this.orthographicCamera.position.y = 3.5;
+    this.orthographicCamera.position.z = 5;
+    this.orthographicCamera.rotation.x = -Math.PI / 6;
 
     this.scene.add(this.orthographicCamera);
 
-    this.cameraHelper = new THREE.CameraHelper(this.orthographicCamera);
-    this.scene.add(this.cameraHelper);
+    // this.cameraHelper = new THREE.CameraHelper(this.orthographicCamera);
+    // this.scene.add(this.cameraHelper);
 
-    const size = 20;
-    const divisions = 20;
-    const gridHelper = new THREE.GridHelper( size, divisions );
-    this.scene.add(gridHelper);
+    // Show 20x20 Grid
+    // const size = 20;
+    // const divisions = 20;
+    // const gridHelper = new THREE.GridHelper( size, divisions );
+    // this.scene.add(gridHelper);
     
-    const axesHelper = new THREE.AxesHelper( 10 );
-    this.scene.add( axesHelper );
+    // Axis Helper to show 3D Coordinate Lines x,y,z
+    // const axesHelper = new THREE.AxesHelper( 10 );
+    // this.scene.add( axesHelper );
   }
 
   setOrbitControls() {
@@ -80,9 +80,9 @@ export default class Camera {
   update() {
     this.controls.update();
 
-    this.cameraHelper.matrixWorldNeedsUpdate = true;
-    this.cameraHelper.update();
-    this.cameraHelper.position.copy(this.orthographicCamera.position);
-    this.cameraHelper.rotation.copy(this.orthographicCamera.rotation);
+    // this.cameraHelper.matrixWorldNeedsUpdate = true;
+    // this.cameraHelper.update();
+    // this.cameraHelper.position.copy(this.orthographicCamera.position);
+    // this.cameraHelper.rotation.copy(this.orthographicCamera.rotation);
   }
 }
